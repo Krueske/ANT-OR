@@ -2964,7 +2964,7 @@ def run_evaluation():
         try:
             with open(output_file, 'w', encoding='utf-8') as f:
                 json.dump(output_data, f, ensure_ascii=False, indent=2)
-            print(f"\n🎉 Epoch {epoch+1} complete! Results saved to: {output_file}")
+            print(f"\nEpoch {epoch+1} complete! Results saved to: {output_file}")
         except Exception as e:
             print(f"\nSave failed: {e}")
     
