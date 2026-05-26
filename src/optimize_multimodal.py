@@ -76,7 +76,7 @@ _image_feature_cache = {}
 
 image_embeddings = {}
 try:
-    image_embedding_path = "/ossfs/workspace/image_embedding.jsonl"
+    image_embedding_path = "./image_embedding.jsonl"
     if os.path.exists(image_embedding_path):
         with open(image_embedding_path, "r", encoding="utf-8") as f:
             for line in f:
@@ -3680,7 +3680,7 @@ def run_evaluation():
         try:
             with open(output_file, 'w', encoding='utf-8') as f:
                 json.dump(output_data, f, ensure_ascii=False, indent=2)
-            print(f"\n🎉 Epoch {epoch+1} complete! Results saved to: {output_file}")
+            print(f"\n Epoch {epoch+1} complete! Results saved to: {output_file}")
         except Exception as e:
             print(f"\nSave failed: {e}")
     
