@@ -1227,7 +1227,7 @@ Best epoch data not found, will use default method""")
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='v0406 Multi-agent Annotation Evaluation Script')
+    parser = argparse.ArgumentParser(description='Multi-agent Annotation Evaluation Script')
     parser.add_argument('--task_type', type=str, required=True, help='Task type')
     parser.add_argument('--output_file_prefix', type=str, required=True, help='Output file prefix')
     parser.add_argument('--use_best_epoch_prompt', action='store_true', default=False,
