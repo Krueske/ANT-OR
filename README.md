@@ -42,7 +42,7 @@ API_KEY = "your-api-key"
 
 > **Note on Privacy:** The benchmark data involving personal privacy has been anonymized.
 
-This project includes parsed annotation data for 7 tasks in the `data/` directory:
+This project includes parsed annotation data for 7 tasks in the `benchmark/` directory:
 
 - `billing_scenario_classification/`: Billing scenario classification data
 - `entity_extraction/`: Medical entity extraction data
