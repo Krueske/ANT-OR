@@ -128,5 +128,4 @@ python src/evaluate_multimodal.py \
 - `--output_file_prefix`: Output file prefix
 - `--use_best_epoch_prompt`: Use prompts from the best performing epoch
 - `--use_optimized_prompt`: Use optimized prompts (the final epoch)
-- `--use_contrastive_context`: Enable contrastive example context injection (default: on)
 
