@@ -184,3 +184,8 @@ Example:
 ```bash
 bash scripts/run_all_tasks.sh eval_single_cot baseline
 ```
+
+## 🌟 Acknowledgements
+
+We sincerely thank all annotators for their careful and dedicated work in
+creating the ANT-A Benchmark.
