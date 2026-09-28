@@ -1,8 +1,7 @@
 # evaluation_functions.py
 import json
-import os
 import re
-from typing import Any, Dict, Optional, List, Union
+from typing import Any, Dict, Optional, List
 
 
 def extract_json_from_text(text: str) -> Optional[Dict[str, Any]]:

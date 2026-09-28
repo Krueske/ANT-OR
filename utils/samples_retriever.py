@@ -4,14 +4,12 @@ Sample Retriever Module
 Provides embedding storage, retrieval, and similarity calculation.
 Uses SQLite with LRU cache for efficient embedding management.
 """
-import difflib
 import json
 import os
 import sqlite3
 import sys
 import threading
-import time
-from typing import List, Dict, Any, Optional, Tuple
+from typing import List, Optional
 from collections import OrderedDict
 import numpy as np
 

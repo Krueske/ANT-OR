@@ -21,6 +21,36 @@ Reasoning Process: [Step-by-step reasoning]
 Annotation Result: {output_format}
 """,
 
+    "annotation_based_on_generated_prompt_direct": """{generated_prompt}
+
+### Query to be Annotated:
+{query}
+
+### Please output in the following format:
+Annotation Result: {output_format}
+""",
+
+    "icl_annotation_prompt": """You are a professional annotation expert. Please annotate the following Query according to the rules and examples below.
+
+### Annotation Rules:
+{doc}
+
+### Reference Examples:
+{icl_context}
+
+### Query to Annotate:
+{query}
+
+### Please output in the following format:
+Reasoning process: [Step-by-step analysis]
+Annotation result: {output_format}
+""",
+
+    "icl_example_section": """[Example {idx}] (similarity: {similarity:.3f})
+Query: {query_with_images}
+Ground Truth: {ground_truth}
+""",
+
     # ============================================================================
     # Verification Prompts
     # ============================================================================
@@ -234,14 +264,6 @@ Before making your judgment, carefully compare:
     # Optimization Prompts
     # ============================================================================
 
-    "reference_optimization_principles": """## Reference Optimization Principles
-1. **Error samples as core**: Carefully analyze each error sample, understand why current prompt leads to these errors, optimization should directly solve these problems.
-2. **Reference dimensions and contrastive samples**: Dimensions and contrastive samples provide summaries of historical error patterns, can serve as optimization reference, but should not overshadow the main focus.
-3. **Fully integrate related suggestions, don't pile up at the end**: Avoid appending "additional notes", "additional clarifications", "supplementary rules" patch paragraphs at the end of the prompt.
-4. **Prioritize reusing existing content**: Most optimization should be achieved by extending or rewriting existing prompt content when referencing dimensions and error samples.
-5. **Eliminate contradictions**: When modifying or adding content based on dimensions and error samples, must check and synchronously correct other parts that may conflict.
-""",
-
     "verifier_optimization_prompt": """You are a verification prompt optimization expert. Your task is to analyze current error samples, identify the root causes in the verification prompt that lead to wrong selections, and perform targeted optimization.
 
 ## Current Verification Prompt (to optimize)
@@ -310,37 +332,85 @@ The following dimensions are general discriminative logic induced from historica
 - Decision boundary: {decision_boundary}
 - Applicable boundary: {applicable_boundary}
 """,
-
-    "dimension_aware_prompt_header": """\n\n## [Decision-Preceding Analysis - Key Learned Discriminative Dimensions]
-Based on historical error analysis, the following discriminative dimensions are crucial for correct annotation. Please evaluate them carefully before making final judgments:
-
+    "reference_optimization_principles": """## Reference Optimization Principles
+1. **Error samples as core**: Carefully analyze each error sample, understand why current prompt leads to these errors, optimization should directly solve these problems.
+2. **Reference dimensions and contrastive samples**: Dimensions and contrastive samples provide summaries of historical error patterns, can serve as optimization reference, but should not overshadow the main focus.
+3. **Fully integrate related suggestions, don't pile up at the end**: Avoid appending "additional notes", "additional clarifications", "supplementary rules" patch paragraphs at the end of the prompt.
+4. **Prioritize reusing existing content**: Most optimization should be achieved by extending or rewriting existing prompt content when referencing dimensions and error samples.
+5. **Eliminate contradictions**: When modifying or adding content based on dimensions and error samples, must check and synchronously correct other parts that may conflict.
 """,
 
-    "dimension_aware_prompt_item_meta_rule": "- Meta-rule: {meta_rule}\n",
-
-    "dimension_aware_prompt_item_rule_intent": "- Rule intent: {rule_intent}\n",
-
-    "dimension_aware_prompt_item_applicable_boundary": "- Applicable boundary: {applicable_boundary}\n",
-
-    "dimension_aware_prompt_item_decision_boundary": "- Decision boundary: {decision_boundary}\n",
-
-    "dimension_aware_prompt_item_confidence": "- Confidence: Based on analysis of {evidence_count} samples\n\n",
-
-    "dimension_aware_prompt_footer": "Please confirm that all the above dimensions have been fully considered before outputting the final answer, especially the rule intent and decision boundary.\n",
-
-    "attribution_question": "Please annotate the Query based on the following annotation document:\n ### Annotation Rule Document:\n{doc_content} \n\n ### Query to be annotated:\n{query}",
 
     # ============================================================================
-    # System Messages
+    # SPO [Self-Supervised Prompt Optimization](https://aclanthology.org/2025.findings-emnlp.479/) templates
     # ============================================================================
 
-    "system_message_default": "You are a helpful assistant.",
+    "spo_annotator_error_sample": """Sample {sid}:
+Query to annotate: {query}{image_placeholder}
+This annotator's output: {agent_output}
+Expected correct answer: {ground_truth}""",
 
-    "system_message_annotation_expert": "You are a professional annotation expert.",
+    "spo_verifier_error_sample": """Sample {sid}:
+Query to annotate: {query}{image_placeholder}
+Each annotator's output:
+{annotations_text}Vote result: {vote_distribution}
+Verifier selection: {verifier_selection}
+Expected correct answer: {ground_truth}""",
 
-    "system_message_rule_expert": "You are an annotation rule expert.",
+    "spo_golden_text_item": "Sample {sid}: {ground_truth}",
 
-    "system_message_verification_expert": "You are a verification prompt optimization expert.",
+    "spo_optimize_annotator_prompt": """You are building a prompt to address annotation requirements. Based on the given prompt, please reconstruct and optimize it.
+You can add, modify, or delete prompt content. Please include a single modification in XML tags in your reply.
+This is a prompt that performed excellently in a previous iteration. You must make further optimizations and improvements based on this prompt.
+The modified prompt must differ from the provided example.
+
+## Current Annotation Prompt:
+```
+{current_prompt}
+```
+
+## The execution result of this prompt (some error cases):
+```
+{error_text}
+```
+
+## The best answer we expect (for reference):
+```
+{golden_text}
+```
+
+Provide your analysis, optimization points, and the complete optimized prompt using the following XML format:
+<analyse>Analyze what drawbacks exist in the results produced by the current prompt and how to improve them.</analyse>
+<modification>Summarize the key points for improvement in one sentence</modification>
+<prompt>Provide the complete optimized prompt here. It must be a full prompt that can be directly used for annotation, not a summary or fragment.</prompt>
+""",
+
+    "spo_optimize_verifier_prompt": """You are building a verification prompt to help a verification agent analyze multiple annotators' reasoning and select the best result.
+Based on the given verification prompt, please reconstruct and optimize it.
+You can add, modify, or delete prompt content. Please include a single modification in XML tags in your reply.
+This is a verification prompt that performed excellently in a previous iteration. You must make further optimizations and improvements.
+The modified verification prompt must differ from the provided example.
+
+## Current Verification Prompt:
+```
+{verification_prompt_template}
+```
+
+## The execution result with this verification prompt (error cases where the verifier selected the wrong annotator, even though a correct annotator existed):
+```
+{error_text}
+```
+
+## The best answer we expect (for reference):
+```
+{golden_text}
+```
+
+Provide your analysis, optimization points, and the complete optimized verification prompt using the following XML format:
+<analyse>Analyze what drawbacks exist in the current verification prompt that led to wrong selections and how to improve them.</analyse>
+<modification>Summarize the key points for improvement in one sentence</modification>
+<prompt>Provide the complete optimized verification prompt here. It must be a complete prompt that can be directly used by the verification agent, not a summary or fragment.</prompt>
+"""
 }
 
 # For backward compatibility
@@ -353,6 +423,8 @@ PROMPTS = PROMPTS_EN
 
 OUTPUT_FORMATS = {
     "disease_privacy_assessment": """```json
+{"隐私合规评估": "有/无问题"}```""",
+    "medical_query_evaluation": """```json
 {"隐私合规评估": "有/无问题"}```""",
     "billing_scenario_classification": """```json
 {"账单类目": "标注结果"}```""",
@@ -562,3 +634,47 @@ def build_verification_prompt(
         vote_text=vote_text,
         sample_section=sample_section
     )
+
+
+def build_dimension_aware_framework(dimensions: list) -> str:
+    """Build the dimension-aware analysis section to append to a base prompt.
+
+    Each dimension dict should have keys: name, meta_rule, rule_intent,
+    applicable_boundary, decision_boundary, evidence_count.
+    """
+    if not dimensions:
+        return ""
+
+    parts = [
+        "\n\n## [Decision-Preceding Analysis - Key Learned Discriminative Dimensions]",
+        "Based on historical error analysis, the following discriminative "
+        "dimensions are crucial for correct annotation. Please evaluate them "
+        "carefully before making final judgments:\n",
+    ]
+
+    for i, dim in enumerate(dimensions, 1):
+        dim_name = dim.get("name", "")
+        meta_rule = dim.get("meta_rule", "")
+        rule_intent = dim.get("rule_intent", "")
+        decision_boundary = dim.get("decision_boundary", "")
+        applicable_boundary = dim.get("applicable_boundary", "")
+        evidence_count = dim.get("evidence_count", 0)
+
+        parts.append(f"**Dimension {i}: {dim_name}**")
+        if meta_rule and meta_rule != dim_name:
+            parts.append(f"- Meta-rule: {meta_rule}")
+        if rule_intent:
+            parts.append(f"- Rule intent: {rule_intent}")
+        if applicable_boundary:
+            parts.append(f"- Applicable boundary: {applicable_boundary}")
+        if decision_boundary:
+            parts.append(f"- Decision boundary: {decision_boundary}")
+        parts.append(f"- Confidence: Based on analysis of {evidence_count} samples\n")
+
+    parts.append(
+        "Please confirm that all the above dimensions have been fully "
+        "considered before outputting the final answer, especially the "
+        "rule intent and decision boundary.\n"
+    )
+
+    return "\n".join(parts)
