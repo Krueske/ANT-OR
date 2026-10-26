@@ -184,6 +184,18 @@ Example:
 ```bash
 bash scripts/run_all_tasks.sh eval_single_cot baseline
 ```
+## 📖 Citation
+
+If you find this work helpful, please cite:
+
+```bibtex
+@article{ke2026anta,
+  title   = {Can LLM Annotators Match Human Consistency? Benchmarking Human Agreement and Optimizing Multi-Agent with Contrastive Knowledge},
+  author  = {Ke, Xiaopeng and Wang, Zhixin and Liu, Xuebo and Ma, Xinyu and Zheng, Xing and Song, Bowen and Wang, Weiqiang and Zhang, Min},
+  journal = {arXiv preprint arXiv:2610.32415},
+  year    = {2026}
+}
+```
 
 ## 🌟 Acknowledgements
 
